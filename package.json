@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd backend && node server.js\" \"cd client && npm start\""
+    "install": "cd backend && npm install && cd .. && cd client && npm install",
+    "backend": "cd backend && node server.js",
+    "client-build": "cd client && npm run build"
   },
   "keywords": [],
   "author": "",
