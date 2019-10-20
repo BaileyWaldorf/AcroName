@@ -1,5 +1,6 @@
 body {
     padding: 20px;
+    scroll-behavior: smooth;
 }
 
 .card {
@@ -9,6 +10,7 @@ body {
 
 .btn {
     margin: 5px;
+    margin-top: 15px;
 }
 
 .alert {

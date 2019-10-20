@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Phrase = new Schema({
+  phrase: String,
   tags: [String]
 });
 

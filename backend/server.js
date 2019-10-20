@@ -31,30 +31,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
-// var data = {
-//   name: 'BAILEY',
-//   phrases: [
-//     {
-//       phrase: "BAILEY IS THE BEST",
-//       tags: [
-//         "Bailey",
-//         "Waldorf",
-//         "Grant"
-//       ]
-//     },
-//     {
-//       phrase: "BAILEY IS THE WORST",
-//       tags: [
-//         "Bailey",
-//         "Grant",
-//         "Waldorf"
-//       ]
-//     }
-//   ]
-// }
-// Acronyms.create(data, function (err) {
-//   if (err) return handleError(err);
-// });
 
 // this is our get method
 // this method fetches all available data in our database
@@ -93,22 +69,46 @@ router.delete('/deleteAcronyms', (req, res) => {
 
 // this is our create methid
 // this method adds new data in our database
-router.post('/putAcronyms', (req, res) => {
-  let data = new Acronyms();
-  const { id, message } = req.body;
-  console.log("Adding new data: " + message + "at index" + id);
+router.post('/addAcronym', (req, res) => {
+  var { name, phrase, tags } = req.body;
+  name = name.toUpperCase();
+  phrase = toUpper(phrase);
+  tags = tags.replace(/\s/g, '');
+  const tagsArray = tags.split(",");
 
-  if ((!id && id !== 0) || !message) {
-    return res.json({
-      success: false,
-      error: 'INVALID INPUTS',
-    });
-  }
-  data.message = message;
-  data.id = id;
-  data.save((err) => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true });
+  console.log(name);
+  console.log(phrase);
+  console.log(tagsArray);
+
+  Acronyms.findOne({acronym: name}, (err, acronym) => {
+    if (err) {
+      console.error("ERROR: " + err);
+      return res.send(err);
+    }
+
+    if(!acronym) {
+      console.log("doesnt exist");
+      // create new entry
+      var data = {
+        acronym: name,
+        phrases: [{ phrase: phrase, tags: tagsArray }]
+      }
+      Acronyms.create(data, function (err) {
+        if (err) {
+          console.log("ERROR: " + err)
+          return res.send(err);
+        }
+        console.log("ADDED NEW ENTRY");
+        return res.json({ success: true });
+      });
+    } else {
+      console.log("exists: " + acronym);
+      // update entry in database
+      var newPhrase = { phrase: phrase, tags: tagsArray };
+      Acronyms.findOneAndUpdate({acronym: name}, {$push: {phrases: newPhrase}}, (err) => {
+        return err ? res.send(err) : res.json({ success: true });
+      });
+    }
   });
 });
 
@@ -153,6 +153,16 @@ function getAcronyms(str){
   }
   console.log( unique = [...new Set(list)]);
   return unique;
+}
+
+function toUpper(str) {
+  return str
+      .toLowerCase()
+      .split(' ')
+      .map(function(word) {
+          return word[0].toUpperCase() + word.substr(1);
+      })
+      .join(' ');
 }
 
 // append /api for our http requests
