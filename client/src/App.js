@@ -34,7 +34,8 @@ class App extends Component {
   // changed and implement those changes into our UI
   componentDidMount() {
     chrome.runtime.onMessage.addListener(this.handleMessage);
-  
+    chrome.tabs.insertCSS({file:"Tooltip.css"});
+    console.log("Loaded CSS");
     chrome.tabs.executeScript(null, {
       file: "getPagesSource.js"
     }, function() {
@@ -70,14 +71,10 @@ class App extends Component {
       }
     })
     .then(response => {
-      response = JSON.parse(response.data);
-      console.log(response);
-      // for(var i = 0; i < response.data.length; i++) {
-      //   console.log(response.data[i]);
-      // }
-      this.setState({acronyms: response});
+      this.setState({acronyms: response.data});
+      console.log(acronyms);
       // returning the data here allows the caller to get it through another .then(...)
-      return response;
+      return response.data;
     })
   }
 
@@ -217,7 +214,7 @@ class App extends Component {
             </Alert>
           }
           {this.state.acronyms.map((acronym) => 
-            <AcronymCard acronym={acronym.acronym} phrase={acronym.phrases[0].phrase} tags={acronym.phrases[0].tags} />
+            <AcronymCard acronym={acronym} spelledOut={"American Standard Code for Information Interchange"} tags={tags} />
           )}
           <ButtonToolbar>
             <Button
