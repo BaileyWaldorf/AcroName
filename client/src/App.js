@@ -26,6 +26,9 @@ class App extends Component {
       objectToUpdate: null,
       pageContent: "",
       acronyms: [],
+      acronym: "",
+      phrase: "",
+      tags: "",
       addAcronym: false,
       reportBug: false,
       loading: true,
@@ -203,6 +206,18 @@ class App extends Component {
     </ButtonToolbar>
   )
 
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleAcronymSubmit = () => {
+    this.setState({addAcronym: false}, () => {
+      console.log("acronym = " + this.state.acronym);
+      console.log("phrase = " + this.state.phrase);
+      console.log("tags = " + this.state.tags);
+    })
+  }
+
   // here is our UI
   // it is easy to understand their functions when you
   // see them render into our screen
@@ -223,19 +238,25 @@ class App extends Component {
           ? <Form>
               <Form.Group controlId="addAcronymForm.acronym">
                 <Form.Label>Acronym</Form.Label>
-                <Form.Control placeholder="TYSM" />
+                <Form.Control name="acronym" placeholder="TYSM" onChange={this.handleChange}/>
               </Form.Group>
               <Form.Group controlId="addAcronymForm.phrase">
                 <Form.Label>Phrase</Form.Label>
-                <Form.Control placeholder="Thank You So Much" />
+                <Form.Control name="phrase" placeholder="Thank You So Much" onChange={this.handleChange}/>
               </Form.Group>
               <Form.Group controlId="addAcronymForm.tags">
                 <Form.Label>Tags</Form.Label>
-                <Form.Control as="textarea" rows="5" placeholder="Tags help us categorize acronyms. Please comma seperate (e.g. automotive, cars, trucks, etc.)"/>
+                <Form.Control
+                  name="tags"
+                  as="textarea"
+                  rows="5"
+                  placeholder="Tags help us categorize acronyms. Please comma seperate (e.g. automotive, cars, trucks, etc.)"
+                  onChange={this.handleChange}
+                />
               </Form.Group>
               <Button
-                type="submit"
-                onClick={() => {this.setState({addAcronym: false})}}
+                type="button"
+                onClick={() => {this.handleAcronymSubmit()}}
               >
                 Submit
               </Button>
