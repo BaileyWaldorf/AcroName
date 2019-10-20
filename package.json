@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aos": "^2.3.4",
     "concurrently": "^5.0.0"
   }
 }
