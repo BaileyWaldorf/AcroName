@@ -7,6 +7,8 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
+import Jumbotron from 'react-bootstrap/Jumbotron';
+import Container from 'react-bootstrap/Container';
 import axios from 'axios';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -91,7 +93,6 @@ class App extends Component {
       //   console.log(response.data[i]);
       // }
       this.setState({acronyms: response, loading: false}, () => {
-        console.log("HOPE");
         console.log(this.state.acronyms);
         var acros = this.state.acronyms;
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -109,6 +110,22 @@ class App extends Component {
       this.setState({loading: false, error: true})
       console.error(err);
     })
+  }
+
+  addNewAcronym = () => {
+    this.setState({addAcronym: false}, () => {
+      return axios.post('http://localhost:3001/api/addAcronym', {
+        name: this.state.acronym,
+        phrase: this.state.phrase,
+        tags: this.state.tags
+      })
+      .then(response => {
+        console.log("response = " + response.data);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+    });
   }
 
   // never let a process live forever
@@ -189,6 +206,17 @@ class App extends Component {
     });
   };
 
+  title = () => {
+    return (
+      <div>
+        <h4>Welcome to Acroname!</h4>
+        <p>
+          We help you name acronyms and stay hip with the times. You can view them here or hover over on the page!
+        </p>
+      </div>
+    )
+  }
+
   alert = () => {
     return this.state.acronyms.length > 0
     ? <Alert variant={'success'} data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
@@ -213,13 +241,17 @@ class App extends Component {
     <ButtonToolbar data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
       <Button
         variant="primary"
-        onClick={() => {this.setState({addAcronym: true, reportBug: false})}}
+        onClick={() => {
+          this.setState({addAcronym: !this.state.addAcronym, reportBug: false}, () => {window.scrollTo({bottom: 0, behavior: 'smooth'}, document.body.scrollHeight)})
+        }}
       >
         Add New Acronym
       </Button>
       <Button
         variant="outline-dark"
-        onClick={() => {this.setState({reportBug: true, addAcronym: false})}}
+        onClick={() => {
+          this.setState({reportBug: !this.state.reportBug, addAcronym: false}, () => {window.scrollTo({bottom: 0, behavior: 'smooth'}, document.body.scrollHeight)})
+        }}
       >
         Report Bug
       </Button>
@@ -250,12 +282,13 @@ class App extends Component {
               <span className="sr-only">Loading...</span>
             </Spinner>
           : <div>
+            {this.title()}
             {this.alert()}
             {this.cards()}
             {this.buttons()}
           </div>}
           {this.state.addAcronym
-          ? <Form>
+          ? <Form data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
               <Form.Group controlId="addAcronymForm.acronym">
                 <Form.Label>Acronym</Form.Label>
                 <Form.Control name="acronym" placeholder="TYSM" onChange={this.handleChange}/>
@@ -276,7 +309,7 @@ class App extends Component {
               </Form.Group>
               <Button
                 type="button"
-                onClick={() => {this.handleAcronymSubmit()}}
+                onClick={() => {this.addNewAcronym()}}
               >
                 Submit
               </Button>
