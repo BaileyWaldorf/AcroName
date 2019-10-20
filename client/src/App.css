@@ -8,5 +8,9 @@ body {
 }
 
 .btn {
-    margin: 5px;
+    margin: 10px;
+}
+
+.alert {
+    min-width: 288px;
 }

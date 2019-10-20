@@ -45,11 +45,11 @@ class App extends Component {
       }
     });
 
-    // this.getDataFromDb();
-    // if (!this.state.intervalIsSet) {
-    //   let interval = setInterval(this.getDataFromDb, 1000);
-    //   this.setState({ intervalIsSet: interval });
-    // }
+    this.getDataFromDb();
+    if (!this.state.intervalIsSet) {
+      let interval = setInterval(this.getDataFromDb, 1000);
+      this.setState({ intervalIsSet: interval });
+    }
   }
 
   handleMessage(msg) {
@@ -159,7 +159,7 @@ class App extends Component {
     const tags = ["Tag1", "Tag2", "Tag3"];
     return (
       <div style={{padding: "20px"}}>
-        {/* <ul>
+        <ul>
           {data.length <= 0
             ? 'NO DB ENTRIES YET'
             : data.map((dat) => (
@@ -170,6 +170,7 @@ class App extends Component {
                 </li>
               ))}
         </ul>
+        {/* 
         <div style={{ padding: '10px' }}>
           <input
             type="text"

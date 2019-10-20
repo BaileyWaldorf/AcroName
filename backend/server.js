@@ -4,25 +4,22 @@ const express = require('express');
 var cors = require('cors');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const Data = require('./data');
+const Data = require('./models/Acronyms');
+
+var myArgs = process.argv.slice(2);
+const MONGO_USERNAME = myArgs[0];
+const MONGO_PASSWORD = myArgs[1];
+const MONGO_DB = myArgs[2];
 
 const API_PORT = 3001;
 const app = express();
 app.use(cors());
 const router = express.Router();
-
 // this is our MongoDB database
-const dbRoute =
-  'mongodb://localhost:27017/test';
+const url = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0-xrkyv.gcp.mongodb.net/${MONGO_DB}?retryWrites=true&w=majority`;
 
-// connects our back end code with the database
-mongoose.connect(dbRoute, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(function (db) { // <- db as first argument
-    console.log(db)
-  })
-  .catch(function (err) {})
-
-let db = mongoose.connection;
+mongoose.connect(url, {useNewUrlParser: true});
+var db = mongoose.connection;
 
 db.once('open', () => console.log('connected to the database'));
 
@@ -39,6 +36,7 @@ app.use(logger('dev'));
 // this method fetches all available data in our database
 router.get('/getData', (req, res) => {
   Data.find((err, data) => {
+    console.log("data found: " + data);
     if (err) return res.json({ success: false, error: err });
     return res.json({ success: true, data: data });
   });
@@ -95,7 +93,14 @@ router.get('/getAcronyms', (req, res) => {
   const { text } = req.query;
 
   var jsonArray = JSON.parse(JSON.stringify(getAcronyms(text)));
-  console.log("jsoonArray = " + jsonArray);
+  // console.info("Found acronyms: " + jsonArray);
+
+  Data.find((err, data) => {
+    if (err) console.error("ERROR: " + err);
+    
+    console.log("DATA: " + data);
+  });
+
   return res.json(jsonArray);
 });
 
@@ -114,7 +119,6 @@ function getAcronyms(str){
           if(match == '' || match == '.' || match == "&");
           else
           {
-              console.log(`Found match, group ${groupIndex}: ${match}`);
               list.push(match);
           }
 

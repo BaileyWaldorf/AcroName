@@ -1,0 +1,1 @@
+{"version":3,"sources":["App.css"],"names":[],"mappings":"AAAA,KACI,YACJ,CAEA,MACI,eAAgB,CAChB,kBACJ,CAEA,KACI,WACJ,CAEA,OACI,eACJ","file":"main.f1430c33.chunk.css","sourcesContent":["body {\r\n    padding: 20px;\r\n}\r\n\r\n.card {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.btn {\r\n    margin: 10px;\r\n}\r\n\r\n.alert {\r\n    min-width: 288px;\r\n}"]}
