@@ -8,7 +8,7 @@ const AcronymCard = (props) => (
   <Card bg="light" style={{ width: '18rem' }}>
     <Card.Header>{props.acronym}</Card.Header>
     <Card.Body>
-      <Card.Title>{props.spelledOut}</Card.Title>
+      <Card.Title>{props.phrase}</Card.Title>
       <Card.Text>
         Tags: {props.tags.map((tag) => {
           return <Badge pill variant="info">{tag}</Badge>

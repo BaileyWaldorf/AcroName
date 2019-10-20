@@ -116,22 +116,23 @@ router.get('/getAcronyms', (req, res) => {
   const { text } = req.query;
 
   var jsonArray = JSON.parse(JSON.stringify(getAcronyms(text)));
-  // console.info("Found acronyms: " + jsonArray);
-  console.log(jsonArray.length);
-  var array = [];
-  for(var i = 0; i < jsonArray.length; i++) {
-    Acronyms.find({acronym: jsonArray[i]}, (err, data) => {
-      if (err) console.error("ERROR: " + err);
-      if (data.length > 0) {
-        console.log(data[0].acronym.toString());
-        array.push(data[0].acronym.toString());
-        // console.log("DATA: " + data);
-      }
-    });
-  }
-  console.log("ARRAY = " + array.length);
 
-  return res.json(array);
+  Promise.all(
+    jsonArray.map(acronym => {
+      return Acronyms.findOne({acronym: acronym}, (err, data) => {
+        if (err) console.error("ERROR: " + err);
+      });
+    })
+  )
+  .then(acronyms => {
+    acronyms.filter(function () { return true });
+    acronyms = acronyms.filter(function (el) {return el != null;});
+    acronyms = JSON.stringify(acronyms);
+    console.log(acronyms);
+    return res.json(acronyms);
+  }).catch(err => {
+    return res.json({ success: false, error: err });
+  });
 });
 
 function getAcronyms(str){

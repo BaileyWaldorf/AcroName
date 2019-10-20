@@ -70,9 +70,14 @@ class App extends Component {
       }
     })
     .then(response => {
-      this.setState({acronyms: response.data});
+      response = JSON.parse(response.data);
+      console.log(response);
+      // for(var i = 0; i < response.data.length; i++) {
+      //   console.log(response.data[i]);
+      // }
+      this.setState({acronyms: response});
       // returning the data here allows the caller to get it through another .then(...)
-      return response.data;
+      return response;
     })
   }
 
@@ -212,7 +217,7 @@ class App extends Component {
             </Alert>
           }
           {this.state.acronyms.map((acronym) => 
-            <AcronymCard acronym={acronym} spelledOut={"American Standard Code for Information Interchange"} tags={tags} />
+            <AcronymCard acronym={acronym.acronym} phrase={acronym.phrases[0].phrase} tags={acronym.phrases[0].tags} />
           )}
           <ButtonToolbar>
             <Button
