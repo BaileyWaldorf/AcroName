@@ -6,9 +6,12 @@ import Alert from 'react-bootstrap/Alert';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Spinner from 'react-bootstrap/Spinner';
 import axios from 'axios';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 class App extends Component {
   // initialize our state
@@ -25,6 +28,8 @@ class App extends Component {
       acronyms: [],
       addAcronym: false,
       reportBug: false,
+      loading: true,
+      error: false
     };
     this.handleMessage = this.handleMessage.bind(this);
   }
@@ -65,10 +70,8 @@ class App extends Component {
    }
 
   axiosGetAcronyms = (text) => {
-    return axios.get('http://localhost:3001/api/getAcronyms', {
-      params: {
+    return axios.post('http://localhost:3001/api/getAcronyms', {
         text: text
-      }
     })
     .then(response => {
       response = JSON.parse(response.data);
@@ -76,9 +79,13 @@ class App extends Component {
       // for(var i = 0; i < response.data.length; i++) {
       //   console.log(response.data[i]);
       // }
-      this.setState({acronyms: response});
+      this.setState({acronyms: response, loading: false});
       // returning the data here allows the caller to get it through another .then(...)
       return response;
+    })
+    .catch((err) => {
+      this.setState({loading: false, error: true})
+      console.error(err);
     })
   }
 
@@ -159,81 +166,59 @@ class App extends Component {
     });
   };
 
+  alert = () => {
+    return this.state.acronyms.length > 0
+    ? <Alert variant={'success'} data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
+        We found <b>{this.state.acronyms.length}</b> acronyms on this page!
+      </Alert>
+    : this.state.error
+    ? <Alert variant={'danger'} data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
+        Oh oh, something went wrong.
+      </Alert>
+    : <Alert variant={'info'} data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
+        Sorry, we didn't find any acronyms. You can manually add one below to help others.
+      </Alert>
+  }
+
+  cards = () => {
+    return this.state.acronyms.map((acronym) => 
+      <AcronymCard acronym={acronym.acronym} phrase={acronym.phrases[0].phrase} tags={acronym.phrases[0].tags} />
+    )
+  }
+
+  buttons = () => (
+    <ButtonToolbar data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
+      <Button
+        variant="primary"
+        onClick={() => {this.setState({addAcronym: true, reportBug: false})}}
+      >
+        Add New Acronym
+      </Button>
+      <Button
+        variant="outline-dark"
+        onClick={() => {this.setState({reportBug: true, addAcronym: false})}}
+      >
+        Report Bug
+      </Button>
+    </ButtonToolbar>
+  )
+
   // here is our UI
   // it is easy to understand their functions when you
   // see them render into our screen
   render() {
-    const tags = ["Tag1", "Tag2", "Tag3"];
+    AOS.init();
     return (
       <div style={{padding: "20px"}}>
-        {/* 
-        <div style={{ padding: '10px' }}>
-          <input
-            type="text"
-            onChange={(e) => this.setState({ message: e.target.value })}
-            placeholder="add something in the database"
-            style={{ width: '200px' }}
-          />
-          <button onClick={() => this.putDataToDB(this.state.message)}>
-            ADD
-          </button>
-        </div>
-        <div style={{ padding: '10px' }}>
-          <input
-            type="text"
-            style={{ width: '200px' }}
-            onChange={(e) => this.setState({ idToDelete: e.target.value })}
-            placeholder="put id of item to delete here"
-          />
-          <button onClick={() => this.deleteFromDB(this.state.idToDelete)}>
-            DELETE
-          </button>
-        </div>
-        <div style={{ padding: '10px' }}>
-          <input
-            type="text"
-            style={{ width: '200px' }}
-            onChange={(e) => this.setState({ idToUpdate: e.target.value })}
-            placeholder="id of item to update here"
-          />
-          <input
-            type="text"
-            style={{ width: '200px' }}
-            onChange={(e) => this.setState({ updateToApply: e.target.value })}
-            placeholder="put new value of the item here"
-          />
-          <button
-            onClick={() =>
-              this.updateDB(this.state.idToUpdate, this.state.updateToApply)
-            }
-          >
-            UPDATE
-          </button> */}
-          {this.state.acronyms.length > 0
-          ? <Alert variant={'success'}>
-              We found <b>{this.state.acronyms.length}</b> acronyms on this page!
-            </Alert>
-          : <Alert variant={'danger'}>
-              Sorry, we didn't find any acronyms. You can manually add one below to help others.
-            </Alert>
-          }
-          {this.state.acronyms.map((acronym) => 
-            <AcronymCard acronym={acronym.acronym} phrase={acronym.phrases[0].phrase} tags={acronym.phrases[0].tags} />
-          )}
-          <ButtonToolbar>
-            <Button
-              variant="primary"
-              onClick={() => {this.setState({addAcronym: true, reportBug: false})}}
-            >
-              Add New Acronym
-            </Button>
-            <Button
-              variant="outline-dark"
-              onClick={() => {this.setState({reportBug: true, addAcronym: false})}}
-            >
-              Report Bug
-            </Button>
-          </ButtonToolbar>
+          {this.state.loading
+          ? <Spinner animation="border" role="status">
+              <span className="sr-only">Loading...</span>
+            </Spinner>
+          : <div>
+            {this.alert()}
+            {this.cards()}
+            {this.buttons()}
+          </div>}
           {this.state.addAcronym
           ? <Form>
               <Form.Group controlId="addAcronymForm.acronym">
@@ -257,7 +242,7 @@ class App extends Component {
             </Form>
         : null}
         {this.state.reportBug
-          ? <Form>
+          ? <Form data-aos="zoom-in" data-aos-anchor-placement="center-bottom">
               <Form.Group controlId="reportBugForm.name">
               <Form.Label>Name</Form.Label>
                 <Form.Control

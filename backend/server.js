@@ -112,9 +112,9 @@ router.post('/putAcronyms', (req, res) => {
   });
 });
 
-router.get('/getAcronyms', (req, res) => {
-  const { text } = req.query;
-
+router.post('/getAcronyms', (req, res) => {
+  const { text } = req.body;
+  console.log(text);
   var jsonArray = JSON.parse(JSON.stringify(getAcronyms(text)));
 
   Promise.all(
@@ -128,7 +128,7 @@ router.get('/getAcronyms', (req, res) => {
     acronyms.filter(function () { return true });
     acronyms = acronyms.filter(function (el) {return el != null;});
     acronyms = JSON.stringify(acronyms);
-    console.log(acronyms);
+    console.log("acronyms = " + acronyms);
     return res.json(acronyms);
   }).catch(err => {
     return res.json({ success: false, error: err });
