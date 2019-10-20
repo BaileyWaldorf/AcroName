@@ -15,7 +15,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
       id: 0,
       message: null,
       intervalIsSet: false,
@@ -45,18 +44,21 @@ class App extends Component {
       }
     });
 
-    this.getDataFromDb();
-    if (!this.state.intervalIsSet) {
-      let interval = setInterval(this.getDataFromDb, 1000);
-      this.setState({ intervalIsSet: interval });
-    }
+    // this.getDataFromDb();
+    // if (!this.state.intervalIsSet) {
+    //   let interval = setInterval(this.getDataFromDb, 1000);
+    //   this.setState({ intervalIsSet: interval });
+    // }
   }
 
   handleMessage(msg) {
     // Handle received messages
     if (msg.action === 'getSource') {
       console.log("msg.source =" + msg.source);
-      this.axiosGetAcronyms(msg.source);
+      this.axiosGetAcronyms(msg.source)
+        .then((res) => {
+          console.log(res);
+        })
       this.setState({pageContent: msg.source});
     }
    }
@@ -91,11 +93,11 @@ class App extends Component {
 
   // our first get method that uses our backend api to
   // fetch data from our data base
-  getDataFromDb = () => {
-    fetch('http://localhost:3001/api/getData')
-      .then((data) => data.json())
-      .then((res) => this.setState({ data: res.data }));
-  };
+  // getDataFromDb = () => {
+  //   fetch('http://localhost:3001/api/getData')
+  //     .then((data) => data.json())
+  //     .then((res) => this.setState({ data: res.data }));
+  // };
 
   // our put method that uses our backend api
   // to create new query into our data base
@@ -155,21 +157,9 @@ class App extends Component {
   // it is easy to understand their functions when you
   // see them render into our screen
   render() {
-    const { data } = this.state;
     const tags = ["Tag1", "Tag2", "Tag3"];
     return (
       <div style={{padding: "20px"}}>
-        <ul>
-          {data.length <= 0
-            ? 'NO DB ENTRIES YET'
-            : data.map((dat) => (
-                <li style={{ padding: '10px' }} key={data.message}>
-                  <span style={{ color: 'gray' }}> id: </span> {dat.id} <br />
-                  <span style={{ color: 'gray' }}> data: </span>
-                  {dat.message}
-                </li>
-              ))}
-        </ul>
         {/* 
         <div style={{ padding: '10px' }}>
           <input

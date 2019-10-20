@@ -8,11 +8,9 @@ const Phrase = new Schema({
 
 // this will be our data base's data structure 
 const Acronym = new Schema({
-    name: { type: String, required: true },
-    phrases: [Phrase]
-  },
-  { timestamps: true }
-);
+  acronym: { type: String, required: true },
+  phrases: [Phrase]
+}, { collection: 'Acronyms' });
 
 // export the new Schema so we could modify it using Node.js
 module.exports = mongoose.model("Acronyms", Acronym);

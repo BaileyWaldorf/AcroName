@@ -4,7 +4,7 @@ const express = require('express');
 var cors = require('cors');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const Data = require('./models/Acronyms');
+const Acronyms = require('./models/Acronyms');
 
 var myArgs = process.argv.slice(2);
 const MONGO_USERNAME = myArgs[0];
@@ -15,7 +15,7 @@ const API_PORT = 3001;
 const app = express();
 app.use(cors());
 const router = express.Router();
-// this is our MongoDB database
+// this is our MongoDB Acronymsbase
 const url = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0-xrkyv.gcp.mongodb.net/${MONGO_DB}?retryWrites=true&w=majority`;
 
 mongoose.connect(url, {useNewUrlParser: true});
@@ -31,12 +31,35 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
+// var data = {
+//   name: 'BAILEY',
+//   phrases: [
+//     {
+//       phrase: "BAILEY IS THE BEST",
+//       tags: [
+//         "Bailey",
+//         "Waldorf",
+//         "Grant"
+//       ]
+//     },
+//     {
+//       phrase: "BAILEY IS THE WORST",
+//       tags: [
+//         "Bailey",
+//         "Grant",
+//         "Waldorf"
+//       ]
+//     }
+//   ]
+// }
+// Acronyms.create(data, function (err) {
+//   if (err) return handleError(err);
+// });
 
 // this is our get method
 // this method fetches all available data in our database
 router.get('/getData', (req, res) => {
-  Data.find((err, data) => {
-    console.log("data found: " + data);
+  Acronyms.find((err, data) => {
     if (err) return res.json({ success: false, error: err });
     return res.json({ success: true, data: data });
   });
@@ -44,9 +67,9 @@ router.get('/getData', (req, res) => {
 
 // this is our update method
 // this method overwrites existing data in our database
-router.post('/updateData', (req, res) => {
+router.post('/updateAcronyms', (req, res) => {
   const { id, update } = req.body;
-  Data.findByIdAndUpdate(id, update, (err) => {
+  Acronyms.findByIdAndUpdate(id, update, (err) => {
     if (err) return res.json({ success: false, error: err });
     return res.json({ success: true });
   });
@@ -54,11 +77,11 @@ router.post('/updateData', (req, res) => {
 
 // this is our delete method
 // this method removes existing data in our database
-router.delete('/deleteData', (req, res) => {
+router.delete('/deleteAcronyms', (req, res) => {
   console.log(req.body);
   const { id } = req.body;
   console.log("Deleting data: " + id);
-  Data.findByIdAndRemove(id, (err) => {
+  Acronyms.findByIdAndRemove(id, (err) => {
     if (err) {
       console.log("ERROR:" + err);
       return res.send(err);
@@ -70,8 +93,8 @@ router.delete('/deleteData', (req, res) => {
 
 // this is our create methid
 // this method adds new data in our database
-router.post('/putData', (req, res) => {
-  let data = new Data();
+router.post('/putAcronyms', (req, res) => {
+  let data = new Acronyms();
   const { id, message } = req.body;
   console.log("Adding new data: " + message + "at index" + id);
 
@@ -94,14 +117,21 @@ router.get('/getAcronyms', (req, res) => {
 
   var jsonArray = JSON.parse(JSON.stringify(getAcronyms(text)));
   // console.info("Found acronyms: " + jsonArray);
+  console.log(jsonArray.length);
+  var array = [];
+  for(var i = 0; i < jsonArray.length; i++) {
+    Acronyms.find({acronym: jsonArray[i]}, (err, data) => {
+      if (err) console.error("ERROR: " + err);
+      if (data.length > 0) {
+        console.log(data[0].acronym.toString());
+        array.push(data[0].acronym.toString());
+        // console.log("DATA: " + data);
+      }
+    });
+  }
+  console.log("ARRAY = " + array.length);
 
-  Data.find((err, data) => {
-    if (err) console.error("ERROR: " + err);
-    
-    console.log("DATA: " + data);
-  });
-
-  return res.json(jsonArray);
+  return res.json(array);
 });
 
 function getAcronyms(str){
@@ -117,11 +147,7 @@ function getAcronyms(str){
       // The result can be accessed through the `m`-variable.
       m.forEach((match, groupIndex) => {
           if(match == '' || match == '.' || match == "&");
-          else
-          {
-              list.push(match);
-          }
-
+          else list.push(match);
       });
   }
   console.log( unique = [...new Set(list)]);
