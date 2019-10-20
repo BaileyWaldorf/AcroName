@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AcronymCard = (props) => (

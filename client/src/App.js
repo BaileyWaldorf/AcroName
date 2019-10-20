@@ -2,7 +2,12 @@
 /*global chrome*/
 import React, { Component } from 'react';
 import AcronymCard from './AcronymCard';
+import Alert from 'react-bootstrap/Alert';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import axios from 'axios';
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
@@ -18,7 +23,9 @@ class App extends Component {
       idToUpdate: null,
       objectToUpdate: null,
       pageContent: "",
-      acronyms: []
+      acronyms: [],
+      addAcronym: false,
+      reportBug: false,
     };
     this.handleMessage = this.handleMessage.bind(this);
   }
@@ -205,10 +212,79 @@ class App extends Component {
           >
             UPDATE
           </button> */}
-          <h2>Here are some acronyms we found.</h2>
+          {this.state.acronyms.length > 0
+          ? <Alert variant={'success'}>
+              We found <b>{this.state.acronyms.length}</b> acronyms on this page!
+            </Alert>
+          : <Alert variant={'danger'}>
+              Sorry, we didn't find any acronyms. You can manually add one below to help others.
+            </Alert>
+          }
           {this.state.acronyms.map((acronym) => 
             <AcronymCard acronym={acronym} spelledOut={"American Standard Code for Information Interchange"} tags={tags} />
           )}
+          <ButtonToolbar>
+            <Button
+              variant="primary"
+              onClick={() => {this.setState({addAcronym: true, reportBug: false})}}
+            >
+              Add New Acronym
+            </Button>
+            <Button
+              variant="outline-dark"
+              onClick={() => {this.setState({reportBug: true, addAcronym: false})}}
+            >
+              Report Bug
+            </Button>
+          </ButtonToolbar>
+          {this.state.addAcronym
+          ? <Form>
+              <Form.Group controlId="addAcronymForm.acronym">
+                <Form.Label>Acronym</Form.Label>
+                <Form.Control placeholder="TYSM" />
+              </Form.Group>
+              <Form.Group controlId="addAcronymForm.phrase">
+                <Form.Label>Phrase</Form.Label>
+                <Form.Control placeholder="Thank You So Much" />
+              </Form.Group>
+              <Form.Group controlId="addAcronymForm.tags">
+                <Form.Label>Tags</Form.Label>
+                <Form.Control as="textarea" rows="5" placeholder="Tags help us categorize acronyms. Please comma seperate (e.g. automotive, cars, trucks, etc.)"/>
+              </Form.Group>
+              <Button
+                type="submit"
+                onClick={() => {this.setState({addAcronym: false})}}
+              >
+                Submit
+              </Button>
+            </Form>
+        : null}
+        {this.state.reportBug
+          ? <Form>
+              <Form.Group controlId="reportBugForm.name">
+              <Form.Label>Name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Mike Rotch"
+                />
+              </Form.Group>
+              <Form.Group controlId="reportBugForm.email">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control type="email" placeholder="name@example.com" />
+              </Form.Group>
+              <Form.Group controlId="reportBugForm.message">
+                <Form.Label>Message</Form.Label>
+                <Form.Control as="textarea" rows="5" placeholder="My app has crashed! Chrome version: ..."/>
+              </Form.Group>
+              <Button
+                type="submit"
+                onClick={() => {this.setState({reportBug: false})}}
+              >
+                Submit
+              </Button>
+            </Form>
+        : null}
         {/* </div> */}
       </div>
     );
