@@ -44,6 +44,14 @@ class App extends Component {
         console.log('There was an error injecting script : \n' + chrome.runtime.lastError.message);
       }
     });
+    chrome.tabs.executeScript(null, {
+      file: "addText.js"
+    }, function() {
+      // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+      if (chrome.runtime.lastError) {
+        console.log('There was an error injecting script : \n' + chrome.runtime.lastError.message);
+      }
+    });
 
     // this.getDataFromDb();
     // if (!this.state.intervalIsSet) {
@@ -76,7 +84,17 @@ class App extends Component {
       // for(var i = 0; i < response.data.length; i++) {
       //   console.log(response.data[i]);
       // }
-      this.setState({acronyms: response});
+      this.setState({acronyms: response}, () => {
+        console.log("HOPE");
+        console.log(this.state.acronyms);
+        var acros = this.state.acronyms;
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, acros , function(response) {
+          console.log(response.farewell);
+        });
+      });
+      });
+      
       // returning the data here allows the caller to get it through another .then(...)
       return response;
     })
@@ -107,6 +125,7 @@ class App extends Component {
 
   // our put method that uses our backend api
   // to create new query into our data base
+  
   putDataToDB = (message) => {
     console.log("adding data...");
     let currentIds = this.state.data.map((data) => data.id);

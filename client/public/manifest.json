@@ -14,6 +14,14 @@
     "48": "logo512.png",
     "128": "logo512.png"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["addText.js"]
+    }
+  ],
   "content_security_policy": "script-src 'self' 'sha256-doPEAW/acz3Yq6zznUjKT9pIWIrGbCQDCajQfJLn3+I='; object-src 'self'",
   "permissions": [
     "tabs", "<all_urls>", "http://*/*", "https://*/*"
