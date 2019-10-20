@@ -4,7 +4,7 @@ Constantly wondering what all these acronyms mean? This chrome extension can hel
 ## Getting Started
 1.  Clone repository
     ```bash
-    git clone https://github.com/BaileyWaldorf/amex-merchant-finder.git
+    git clone https://github.com/BaileyWaldorf/HackFSU.git
     ```
 
 2.  Install
