@@ -165,6 +165,45 @@ function toUpper(str) {
       .join(' ');
 }
 
+router.post('/generateFreqGraph', (req, res) => {
+  var {text, tags } = req.body;
+  text = text;
+  tags = tags.replace(/\s/g, '');
+  var tagsArray = tags.split(",");
+  var max = 0;
+  var finalTag = null;
+  console.log("we are in the generate method and here is the text:");
+  var freqArray = generateFrequencies(text);
+  tags.forEach(function (tag) {
+    if(freqArray.includes(tag) && freqArray[tag] > max){
+      max = freqArray[tag];
+      finalTag = tag;
+    }
+  });
+  return finalTag;
+});
+
+function generateFrequencies(str){
+  var nogolist = ['','the','be','to','of','and','a','in','that','have','it','for','not','on','with','he','as','you','do','at','this','but','his','by','from','they','we',
+  'say','her','she','or','will','an','my','one','all','would','there','their','what','so','up','out','if','about','who','get','which','go','when','me','can','like',
+  'time','no','just','him','know','take','into','your','some','could','them','see','other','than','then','now','look','only','come','its','over','think',
+  'also','back','after','use','two','how','our','work','well','way','even','new','want','because','any','these','give','day','most','us','is','are'];
+  var words = str.replace(/[^a-zA-Z ]/g, "").split(" ");
+  var freqs = {};
+  var freqs = {};
+  words.forEach(function (item) {
+    item = item.toLowerCase();
+    if(!nogolist.includes(item)){
+      if(freqs[item] == null)
+        freqs[item] = 1;
+      else
+        freqs[item] += 1;
+    }
+  });
+  console.log("freqArray:", freqs);
+  return freqs;
+}
+
 // append /api for our http requests
 app.use('/api', router);
 

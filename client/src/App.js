@@ -95,6 +95,10 @@ class App extends Component {
       this.setState({acronyms: response, loading: false}, () => {
         console.log(this.state.acronyms);
         var acros = this.state.acronyms;
+        this.axiosGetMostLikelyDefinition(text)
+          .then((res) => {
+            console.log(res);
+          })
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, acros , function(response) {
           console.log(response.farewell);
@@ -109,6 +113,16 @@ class App extends Component {
     .catch((err) => {
       this.setState({loading: false, error: true})
       console.error(err);
+    })
+  }
+
+  axiosGetMostLikelyDefinition = (text) => {
+    return axios.post('http://localhost:3001/api/generateFreqGraph', {
+        text: text,
+        tags: this.state.tags
+    })
+    .then(response =>{
+        console.log(response);
     })
   }
 
