@@ -2,7 +2,7 @@
 Tired of memorizing letters? Trying to stay hip with the times? AcroName is here to help!
 
 <img src="https://github.com/BaileyWaldorf/AcroName/blob/master/assets/readme1.png" alt="" width="350" /> <img src="https://github.com/BaileyWaldorf/AcroName/blob/master/assets/readme2.png" alt="" width="350" />
-<img src="https://github.com/BaileyWaldorf/AcroName/blob/master/assets/readme3.png" alt="" width="700" />
+<img src="https://github.com/BaileyWaldorf/AcroName/blob/master/assets/readme3.png" alt="" width="706" />
 
 ## Getting Started
 1.  Clone repository
