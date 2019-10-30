@@ -4,12 +4,12 @@ Tired of memorizing letters? Trying to stay hip with the times? AcroName is here
 ## Getting Started
 1.  Clone repository
     ```bash
-    git clone https://github.com/BaileyWaldorf/HackFSU.git
+    git clone https://github.com/BaileyWaldorf/AcroName.git
     ```
 
 2.  Install
     ```bash
-    cd HackFSU
+    cd AcroName
     npm run install
     ```
 
