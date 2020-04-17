@@ -16,6 +16,7 @@
     "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
-    "throttled-queue": "^1.0.7"
+    "throttled-queue": "^1.0.7",
+    "stopword": "^0.3.3"
   }
 }
