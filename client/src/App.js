@@ -211,7 +211,7 @@ class App extends Component {
       <div>
         <h4>Welcome to Acroname!</h4>
         <p>
-          We help you name acronyms and stay hip with the times. You can view them here or hover over on the page!
+          We help you name acronyms and stay hip with the times. You can view them here or hover over them on the page!
         </p>
       </div>
     )

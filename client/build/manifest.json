@@ -1,18 +1,18 @@
 {
   "manifest_version": 2,
 
-  "name": "My Extension",
-  "description": "This extension is a starting point to create a real Chrome extension",
-  "version": "0.0.1",
+  "name": "Acroname",
+  "description": "We help you name acronyms and stay hip with the times. You can view them here or hover over on the page!",
+  "version": "1.0.0",
 
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Open the popup"
   },
   "icons": {
-    "16": "logo192.png",
-    "48": "logo512.png",
-    "128": "logo512.png"
+    "16": "logo16.png",
+    "48": "logo48.png",
+    "128": "logo128.png"
   },
   "content_scripts": [
     {
